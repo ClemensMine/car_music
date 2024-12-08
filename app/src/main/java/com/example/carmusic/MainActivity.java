@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter infoFilter = new IntentFilter(String.valueOf(BroadcastStatus.MUSIC_TITLE_UPDATE.getStatus()));
         registerReceiver(infoReceiver, infoFilter);
 
+        // 注册音乐播放service
         Intent i = new Intent(this, MusicService.class);
         startService(i);
 

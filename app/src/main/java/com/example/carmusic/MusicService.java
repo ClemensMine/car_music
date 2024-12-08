@@ -50,6 +50,7 @@ public class MusicService extends Service {
                             mediaPlayer.stop();
                             break;
                     }
+                    sendMusicInfoBroadcast("Ocean");
                 }
             }
         };
@@ -60,7 +61,6 @@ public class MusicService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        sendMusicInfoBroadcast("Ocean");
         return START_NOT_STICKY;
     }
 
