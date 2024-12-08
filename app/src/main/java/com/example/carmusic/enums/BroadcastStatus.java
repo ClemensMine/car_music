@@ -3,7 +3,8 @@ package com.example.carmusic.enums;
 public enum BroadcastStatus {
     MUSIC_TITLE_UPDATE(1000),
     MUSIC_STATUS_UPDATE(1001),
-    MUSIC_PROGRESS_UPDATE(1002);
+    MUSIC_PROGRESS_UPDATE(1002),
+    MUSIC_PROGRESS_TO(1003);
 
     private int status;
 

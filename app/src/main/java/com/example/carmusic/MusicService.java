@@ -67,6 +67,7 @@ public class MusicService extends Service {
 
                         case 1:
                             mediaPlayer.pause();
+                            progressUpdateTimer.cancel();
                             break;
 
                         case 2:
@@ -90,13 +91,13 @@ public class MusicService extends Service {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
-                if (action.equals(String.valueOf(BroadcastStatus.MUSIC_PROGRESS_UPDATE.getStatus()))){
-                    sendMusicProgressInfo();
+                if (action.equals(String.valueOf(BroadcastStatus.MUSIC_PROGRESS_TO.getStatus()))){
+                    mediaPlayer.seekTo(intent.getIntExtra("position",0));
                 }
             }
         };
 
-        IntentFilter filter = new IntentFilter(String.valueOf(BroadcastStatus.MUSIC_PROGRESS_UPDATE.getStatus()));
+        IntentFilter filter = new IntentFilter(String.valueOf(BroadcastStatus.MUSIC_PROGRESS_TO.getStatus()));
         registerReceiver(receiver, filter);
     }
 

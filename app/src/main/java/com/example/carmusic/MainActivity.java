@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private SeekBar timeSeekBar;
     private BroadcastReceiver infoReceiver;
 
+    private Boolean changeProgress = false;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +79,25 @@ public class MainActivity extends AppCompatActivity {
 
         playBtn.setOnClickListener(v -> onPlayBtnClick());
         pauseBtn.setOnClickListener(v -> onPauseBtnClick());
+
+        // 进度条拖动功能
+        timeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                changeProgress = true;
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                sendBroadcast(new Intent(String.valueOf(BroadcastStatus.MUSIC_PROGRESS_TO.getStatus())).putExtra("position",seekBar.getProgress()));
+                changeProgress = false;
+            }
+        });
     }
 
     /***
@@ -88,6 +109,9 @@ public class MainActivity extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
                 if (action.equals(String.valueOf(BroadcastStatus.MUSIC_PROGRESS_UPDATE.getStatus()))){
+                    if(changeProgress){
+                        return;
+                    }
                     Bundle bundle = intent.getExtras();
                     timeSeekBar.setMax(bundle.getInt("total"));
                     timeSeekBar.setProgress(bundle.getInt("current"));
