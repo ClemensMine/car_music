@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">car music</string>
+    <string name="music_now_playing">当前正在播放：Oceanside</string>
+    <string name="last_music">上一首</string>
+    <string name="music_play_controller">播放控制</string>
+    <string name="next_music">下一首</string>
+    <string name="mute_music">一键静音</string>
+    <string name="music_start_btn_des">开始播放</string>
+    <string name="music_pause_btn">暂停播放</string>
+</resources>
