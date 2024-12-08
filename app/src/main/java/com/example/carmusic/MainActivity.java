@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Telephony;
@@ -37,9 +38,14 @@ public class MainActivity extends AppCompatActivity {
     private ImageView volumeBtn;
     private TextView musicTitleTextview;
     private SeekBar timeSeekBar;
+    private SeekBar volumeBar;
     private BroadcastReceiver infoReceiver;
 
     private Boolean changeProgress = false;
+    private int tempVolume = 0;
+    private Boolean mute = false;
+
+    private AudioManager audioManager;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -65,6 +71,22 @@ public class MainActivity extends AppCompatActivity {
         sendBroadcast(new Intent(String.valueOf(BroadcastStatus.MUSIC_STATUS_UPDATE.getStatus())).putExtra("status", MusicStatus.PAUSE.getStatus()));
     }
 
+
+    private void onMuteBtnClick(){
+        if (mute){
+            // 已静音后处理
+            volumeBtn.setImageResource(R.drawable.volume);
+            volumeBar.setProgress(tempVolume);
+        }else {
+            // 未静音处理
+            volumeBtn.setImageResource(R.drawable.volume_mute);
+            tempVolume = volumeBar.getProgress();
+            volumeBar.setProgress(0);
+        }
+
+        mute = !mute;
+    }
+
     /***
      * 初始化控件资源
      */
@@ -75,11 +97,21 @@ public class MainActivity extends AppCompatActivity {
         nextMusicBtn = findViewById(R.id.next_music_btn);
         volumeBtn = findViewById(R.id.volume_btn);
         timeSeekBar = findViewById(R.id.time_seekbar);
+        volumeBar = findViewById(R.id.volume_bar);
         musicTitleTextview = findViewById(R.id.music_title_textview);
 
         playBtn.setOnClickListener(v -> onPlayBtnClick());
         pauseBtn.setOnClickListener(v -> onPauseBtnClick());
+        volumeBtn.setOnClickListener(v -> onMuteBtnClick());
 
+        initMusicProgressBar();
+        initVolumeBar();
+    }
+
+    /***
+     * 初始化音乐进度条
+     */
+    private void initMusicProgressBar(){
         // 进度条拖动功能
         timeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -96,6 +128,38 @@ public class MainActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
                 sendBroadcast(new Intent(String.valueOf(BroadcastStatus.MUSIC_PROGRESS_TO.getStatus())).putExtra("position",seekBar.getProgress()));
                 changeProgress = false;
+            }
+        });
+    }
+
+    /***
+     * 初始化音量条
+     */
+    private void initVolumeBar(){
+
+        audioManager = ((AudioManager) getSystemService(AUDIO_SERVICE));
+
+        int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+
+        volumeBar.setMax(maxVolume);
+        volumeBar.setProgress(currentVolume);
+
+        // 监听音量条
+        volumeBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
     }
