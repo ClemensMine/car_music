@@ -84,6 +84,7 @@
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                 android:layout_width="500dp"
                 android:layout_height="50dp"
+                android:id="@+id/time_seekbar"
                 android:max="100"/>
 
             <SeekBar
