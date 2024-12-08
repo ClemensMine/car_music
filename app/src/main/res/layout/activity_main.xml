@@ -63,14 +63,6 @@
                 android:id="@+id/next_music_btn"
                 android:src="@drawable/right_arrow"/>
 
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="30dp"
-                android:id="@+id/volume_btn"
-                android:contentDescription="@string/mute_music"
-                android:src="@drawable/volume"/>
-
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <!--进度条和音量区-->
@@ -87,10 +79,18 @@
                 android:id="@+id/time_seekbar"
                 android:max="100"/>
 
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="30dp"
+                android:id="@+id/volume_btn"
+                android:contentDescription="@string/mute_music"
+                android:src="@drawable/volume"/>
+
             <SeekBar
                 android:layout_width="200dp"
                 android:layout_height="50dp"
-                android:layout_marginStart="50dp"
+                android:layout_marginStart="30dp"
                 android:id="@+id/volume_bar"
                 android:progress="5"
                 android:max="10"/>

@@ -23,10 +23,12 @@ import com.example.carmusic.enums.BroadcastStatus;
 import com.example.carmusic.enums.MusicStatus;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class MusicService extends Service {
+    private File downloadFile = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
     private MediaPlayer mediaPlayer;
     private BroadcastReceiver receiver;
     private Timer progressUpdateTimer;
@@ -37,6 +39,8 @@ public class MusicService extends Service {
         mediaPlayer = MediaPlayer.create(this, R.raw.oceanside);
         initMusicStatusReceiver();
         initMusicProgressReceiver();
+
+        System.out.println(Arrays.toString(downloadFile.list()));
     }
 
     /***

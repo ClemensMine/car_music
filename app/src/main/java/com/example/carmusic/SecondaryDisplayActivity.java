@@ -1,20 +1,11 @@
 package com.example.carmusic;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.ActivityOptions;
-import android.app.IntentService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.hardware.display.DisplayManager;
 import android.media.AudioManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Telephony;
-import android.view.Display;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -28,12 +19,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.carmusic.enums.BroadcastStatus;
 import com.example.carmusic.enums.MusicStatus;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-import kotlin.jvm.internal.Intrinsics;
-
-public class MainActivity extends AppCompatActivity {
+public class SecondaryDisplayActivity extends AppCompatActivity {
 
     private ImageView lastMusicBtn;
     private ImageView playBtn;
@@ -49,36 +35,14 @@ public class MainActivity extends AppCompatActivity {
 
     private AudioManager audioManager;
 
-    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
+        setContentView(R.layout.activity_secondary_display);
         initViews();
 
         registerMusicProgressReceiver();
-        registerMusicTitleReceiver();
         registerMusicVolumeReceiver();
-
-        requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},100);
-
-        // 注册音乐播放service
-        Intent i = new Intent(this, MusicService.class);
-        startService(i);
-    }
-
-    private void onPlayBtnClick(){
-        sendBroadcast(new Intent(String.valueOf(BroadcastStatus.MUSIC_STATUS_UPDATE.getStatus())).putExtra("status", MusicStatus.START.getStatus()));
-    }
-
-    private void onPauseBtnClick(){
-        sendBroadcast(new Intent(String.valueOf(BroadcastStatus.MUSIC_STATUS_UPDATE.getStatus())).putExtra("status", MusicStatus.PAUSE.getStatus()));
-    }
-
-
-    private void onMuteBtnClick(){
-        sendBroadcast(new Intent(String.valueOf(BroadcastStatus.MUSIC_VOLUME_TO.getStatus())).putExtra("volume", 0));
     }
 
     /***
@@ -100,22 +64,19 @@ public class MainActivity extends AppCompatActivity {
 
         initMusicProgressBar();
         initVolumeBar();
-
-        initSecondDisplay();
     }
 
-    /***
-     * 初始化副屏
-     */
-    private void initSecondDisplay(){
-        DisplayManager displayManager = (DisplayManager) getSystemService(DISPLAY_SERVICE);
-        Display[] displays = displayManager.getDisplays();
-        if(displays != null && displays.length > 1){
-            Intent intent = new Intent(this, SecondaryDisplayActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            ActivityOptions activityOptions = ActivityOptions.makeBasic().setLaunchDisplayId(displays[1].getDisplayId());
-            startActivity(intent, activityOptions.toBundle());
-        }
+    private void onPlayBtnClick(){
+        sendBroadcast(new Intent(String.valueOf(BroadcastStatus.MUSIC_STATUS_UPDATE.getStatus())).putExtra("status", MusicStatus.START.getStatus()));
+    }
+
+    private void onPauseBtnClick(){
+        sendBroadcast(new Intent(String.valueOf(BroadcastStatus.MUSIC_STATUS_UPDATE.getStatus())).putExtra("status", MusicStatus.PAUSE.getStatus()));
+    }
+
+
+    private void onMuteBtnClick(){
+        sendBroadcast(new Intent(String.valueOf(BroadcastStatus.MUSIC_VOLUME_TO.getStatus())).putExtra("volume", 0));
     }
 
     /***
@@ -199,25 +160,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /***
-     * 注册音乐标题信息同步广播
-     */
-    private void registerMusicTitleReceiver(){
-        infoReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                String action = intent.getAction();
-                if (action.equals(String.valueOf(BroadcastStatus.MUSIC_TITLE_UPDATE.getStatus()))){
-                    String title = intent.getStringExtra("title");
-                    musicTitleTextview.setText("当前正在播放："+title);
-                }
-            }
-        };
-
-        IntentFilter infoFilter = new IntentFilter(String.valueOf(BroadcastStatus.MUSIC_TITLE_UPDATE.getStatus()));
-        registerReceiver(infoReceiver, infoFilter);
-    }
-
-    /***
      * 注册音乐音量同步广播
      */
     private void registerMusicVolumeReceiver(){
@@ -243,6 +185,5 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter(String.valueOf(BroadcastStatus.MUSIC_VOLUME_TO.getStatus()));
         registerReceiver(infoReceiver, filter);
     }
-
 
 }
