@@ -14,12 +14,14 @@ import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Telephony;
+import android.util.Log;
 import android.view.Display;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -62,10 +64,6 @@ public class MainActivity extends AppCompatActivity {
         registerMusicVolumeReceiver();
 
         requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},100);
-
-        // 注册音乐播放service
-        Intent i = new Intent(this, MusicService.class);
-        startService(i);
     }
 
     private void onPlayBtnClick(){
@@ -79,6 +77,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void onMuteBtnClick(){
         sendBroadcast(new Intent(String.valueOf(BroadcastStatus.MUSIC_VOLUME_TO.getStatus())).putExtra("volume", 0));
+    }
+
+    private void onPlayNextBtnClick(){
+        sendBroadcast(new Intent(String.valueOf(BroadcastStatus.MUSIC_PLAY_NEXT.getStatus())));
     }
 
     /***
@@ -97,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
         playBtn.setOnClickListener(v -> onPlayBtnClick());
         pauseBtn.setOnClickListener(v -> onPauseBtnClick());
         volumeBtn.setOnClickListener(v -> onMuteBtnClick());
+        nextMusicBtn.setOnClickListener(v -> onPlayNextBtnClick());
 
         initMusicProgressBar();
         initVolumeBar();
@@ -244,5 +247,25 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(infoReceiver, filter);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 100){
+            boolean allGranted = true;
+            for (int grantResult : grantResults) {
+                if (grantResult != PackageManager.PERMISSION_GRANTED){
+                    allGranted = false;
+                    break;
+                }
+            }
 
+            if (allGranted){
+                // 注册音乐播放service
+                Intent i = new Intent(this, MusicService.class);
+                startService(i);
+            }else {
+                Log.e("Permission Denied","未授予所有权限");
+            }
+        }
+    }
 }
