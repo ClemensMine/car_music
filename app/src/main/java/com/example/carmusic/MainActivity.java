@@ -83,6 +83,10 @@ public class MainActivity extends AppCompatActivity {
         sendBroadcast(new Intent(String.valueOf(BroadcastStatus.MUSIC_PLAY_NEXT.getStatus())));
     }
 
+    private void onPlayPrevioutBtnClick(){
+        sendBroadcast(new Intent(String.valueOf(BroadcastStatus.MUSIC_PLAY_LAST.getStatus())));
+    }
+
     /***
      * 初始化控件资源
      */
@@ -100,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
         pauseBtn.setOnClickListener(v -> onPauseBtnClick());
         volumeBtn.setOnClickListener(v -> onMuteBtnClick());
         nextMusicBtn.setOnClickListener(v -> onPlayNextBtnClick());
+        lastMusicBtn.setOnClickListener(v -> onPlayPrevioutBtnClick());
 
         initMusicProgressBar();
         initVolumeBar();

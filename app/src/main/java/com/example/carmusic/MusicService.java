@@ -42,7 +42,7 @@ public class MusicService extends Service {
     private int currentIndex = 0;
 
     // 歌名+路径
-    private List<MusicEntity> musics = new ArrayList<>();
+    private final List<MusicEntity> musics = new ArrayList<>();
 
     @Override
     public void onCreate() {
@@ -51,6 +51,7 @@ public class MusicService extends Service {
         initMusicStatusReceiver();
         initMusicProgressReceiver();
         initPlayNextReceiver();
+        initPlayLastReceiver();
     }
 
     private void playNext(){
@@ -71,6 +72,18 @@ public class MusicService extends Service {
         playMedia(music.getUri());
         sendMusicInfoBroadcast(music.getTitle());
         currentIndex++;
+    }
+
+    private void playPrevious() {
+        if (currentIndex > 0) {
+            currentIndex--; // 回退索引到上一首
+        } else {
+            currentIndex = musics.size() - 1; // 如果是第一首，则跳转到最后一首
+        }
+
+        MusicEntity music = musics.get(currentIndex);
+        playMedia(music.getUri());
+        sendMusicInfoBroadcast(music.getTitle());
     }
 
     private void playMedia(String uri){
@@ -171,6 +184,24 @@ public class MusicService extends Service {
 
         IntentFilter filter = new IntentFilter(String.valueOf(BroadcastStatus.MUSIC_PLAY_NEXT.getStatus()));
         registerReceiver(playNextReceiver, filter);
+    }
+
+    /***
+     * 接收播放上一个广播
+     */
+    private void initPlayLastReceiver(){
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (action.equals(String.valueOf(BroadcastStatus.MUSIC_PLAY_LAST.getStatus()))){
+                    playPrevious();
+                }
+            }
+        };
+
+        IntentFilter filter = new IntentFilter(String.valueOf(BroadcastStatus.MUSIC_PLAY_LAST.getStatus()));
+        registerReceiver(receiver, filter);
     }
 
 

@@ -6,7 +6,8 @@ public enum BroadcastStatus {
     MUSIC_PROGRESS_UPDATE(1002),
     MUSIC_PROGRESS_TO(1003),
     MUSIC_VOLUME_TO(1004),
-    MUSIC_PLAY_NEXT(1005);
+    MUSIC_PLAY_NEXT(1005),
+    MUSIC_PLAY_LAST(1006);
 
     private int status;
 
